@@ -9,9 +9,9 @@ export class User
     firstName: string;
 
     @Prop()
-    lastName?: string;
+    lastName: string;
 
-    @Prop()
+    @Prop({ required: true, unique: true })
     email: string;
 }
 
