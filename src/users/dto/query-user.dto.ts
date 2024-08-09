@@ -1,9 +1,10 @@
 import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
-import { CreateConfigDto } from './create-config.dto';
-import { IsOptional } from 'class-validator';
 
-export class QueryConfigDto extends PartialType(
-  PickType(CreateConfigDto, ['name', 'code'] as const),
+import { IsOptional } from 'class-validator';
+import { CreateUserDto } from './create-user.dto';
+
+export class QueryUserDto extends PartialType(
+  PickType(CreateUserDto, ['firstName', 'lastName'] as const),
 ) {
   @IsOptional()
   q: string;

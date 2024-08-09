@@ -27,15 +27,16 @@ export class ConfigsService {
         type: QueryType.Regex,
       },
     ]);
-    console.log({ skip, limit, page, sort, filter });
 
-    const docs = await this.configModel.find(filter, {}, { skip, limit, sort });
+    const docs = await this.configModel
+      .find(filter, {}, { skip, limit, sort })
+      .lean();
     const count = await this.configModel.countDocuments(filter);
     return {
       message: STRINGS.SUCCESS,
-      count,
       page,
       size: limit,
+      count,
       data: docs,
     };
   }
@@ -43,19 +44,19 @@ export class ConfigsService {
   async findOne(id: string) {
     return {
       message: STRINGS.SUCCESS,
-      data: await this.configModel.findById(id),
+      data: await this.configModel.findById(id).lean(),
     };
   }
 
   async update(id: string, updateConfigDto: UpdateConfigDto) {
-    await this.configModel.findByIdAndUpdate(id, updateConfigDto);
+    await this.configModel.findByIdAndUpdate(id, updateConfigDto).lean();
     return {
       message: STRINGS.SUCCESS,
     };
   }
 
   async remove(id: string) {
-    await this.configModel.findByIdAndDelete(id);
+    await this.configModel.findByIdAndDelete(id).lean();
     return {
       message: STRINGS.SUCCESS,
     };

@@ -6,9 +6,11 @@ import {
   validationExceptionHandler,
 } from './utils/exceptions';
 import { DevInterceptor } from './utils/interceptors';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -17,6 +19,6 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new GenericExceptionFilter());
   app.useGlobalInterceptors(new DevInterceptor());
-  await app.listen(process.env.PORT);
+  await app.listen(configService.get('PORT'));
 }
 bootstrap();

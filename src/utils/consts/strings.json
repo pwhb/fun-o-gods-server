@@ -7,6 +7,5 @@
   "INVALID_PASSWORD": "Invalid password.",
   "INTERNAL_SERVER_ERROR": "Internal Server Error",
   "DUPLICATED_KEY_ERROR": "Duplicated Key Error.",
-  "FAILED_TO_CREATE": "Failed to create.",
-  "CANNOT_READ_PROPERTIES_OF_UNDEFINED_READING_LENGTH": "Cannot read properties of undefined (reading 'length')"
+  "FAILED_TO_CREATE": "Failed to create."
 }

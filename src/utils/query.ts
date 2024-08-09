@@ -16,70 +16,73 @@ export enum QueryType {
   Regex,
   Any,
 }
-const exclude = ['page', 'size', 'q', 'sort', 'select'];
+const exclude = ['page', 'size', 'sort_by', 'select'];
 
 function getFilter(query: any, queryConf?: QueryKey[]) {
   const or: any[] = [];
   const and: any[] = [];
-
   const filter: any = {};
-  for (let key of Object.keys(query)) {
-    if (!exclude.includes(key)) {
-      const config =
-        queryConf && queryConf.length && queryConf.find((v) => v.key === key);
-      if (config) {
-        switch (config.type) {
-          case QueryType.String: {
-            filter[config.field ? config.field : key] = query[key];
-            break;
-          }
-          case QueryType.Boolean: {
-            filter[config.field ? config.field : key] = query[key] === 'true';
-            break;
-          }
-          case QueryType.ObjectId: {
-            filter[config.field ? config.field : key] =
-              new mongoose.Types.ObjectId(query[key] as string);
-            break;
-          }
-          case QueryType.Date: {
-            if (!!query[`${key}.from`]) {
-              const from = new Date(query[`${key}.from`]).getTime();
-              and.push({
-                [config.field ? config.field : key]: {
-                  $gte: from,
-                },
-              });
-            }
 
-            if (!!query[`${key}.to`]) {
-              const to = new Date(query[`${key}.to`]).getTime();
-              and.push({
-                [config.field ? config.field : key]: {
-                  $lt: to + 1000 * 60 * 60 * 24,
-                },
-              });
-            }
-            break;
-          }
-          case QueryType.Regex: {
-            if (config.searchedFields && config.searchedFields.length) {
-              for (let searchedKey of config.searchedFields) {
-                or.push({
-                  [searchedKey]: { $regex: query[key], $options: 'i' },
-                });
-              }
-            } else {
-              or.push({
-                [key]: { $regex: query[key], $options: 'i' },
-              });
-            }
-            break;
-          }
+  for (let key of Object.keys(query).filter((v) => !exclude.includes(v))) {
+    const config =
+      queryConf && queryConf.length && queryConf.find((v) => v.key === key);
+    if (config) {
+      const filterKey = config.field ? config.field : key;
+
+      switch (config.type) {
+        case QueryType.String: {
+          filter[filterKey] = query[key];
+          break;
         }
-      } else {
-        filter[key] = query[key];
+        case QueryType.Boolean: {
+          if (query[key] === 'true') {
+            filter[filterKey] = true;
+          } else if (query[key] === 'false') {
+            filter[filterKey] = false;
+          }
+          break;
+        }
+        case QueryType.ObjectId: {
+          filter[filterKey] = new mongoose.Types.ObjectId(query[key] as string);
+          break;
+        }
+        case QueryType.Date: {
+          if (!!query[`${key}.from`]) {
+            const from = new Date(query[`${key}.from`]).getTime();
+            and.push({
+              [filterKey]: {
+                $gte: from,
+              },
+            });
+          }
+
+          if (!!query[`${key}.to`]) {
+            const to = new Date(query[`${key}.to`]).getTime();
+            and.push({
+              [filterKey]: {
+                $lt: to + 1000 * 60 * 60 * 24,
+              },
+            });
+          }
+          break;
+        }
+        case QueryType.Regex: {
+          if (config.searchedFields && config.searchedFields.length) {
+            for (let searchedKey of config.searchedFields) {
+              or.push({
+                [searchedKey]: { $regex: query[key], $options: 'i' },
+              });
+            }
+          } else {
+            or.push({
+              [key]: { $regex: query[key], $options: 'i' },
+            });
+          }
+          break;
+        }
       }
+    } else {
+      filter[key] = query[key];
     }
   }
 
@@ -104,7 +107,7 @@ function getSort(sort_by?: any) {
       sort[field] = trimmed[0] === '-' ? -1 : 1;
     }
   } else {
-    sort['history.created.at'] = -1;
+    sort['createdAt'] = -1;
   }
   return sort;
 }
