@@ -5,6 +5,7 @@ import {
   GenericExceptionFilter,
   validationExceptionHandler,
 } from './utils/exceptions';
+import { DevInterceptor } from './utils/interceptors';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,7 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new GenericExceptionFilter());
+  // app.useGlobalInterceptors(new DevInterceptor)
   await app.listen(process.env.PORT);
 }
 bootstrap();

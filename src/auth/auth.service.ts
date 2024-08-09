@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Auth } from './auth.schema';
 import { Model } from 'mongoose';
 import { User } from 'src/users/users.schema';
+import { STRINGS } from 'src/utils/config';
 
 @Injectable()
 export class AuthService {
@@ -17,19 +18,20 @@ export class AuthService {
     const user = await this.userModel
       .findOne({ email: loginAuthDto.email })
       .lean();
-    if (!user) throw new Error('User not found');
-    console.log(user);
+    if (!user) throw new Error(STRINGS.USER_NOT_FOUND);
 
     const auth = await this.authModel.findOne({ userId: user._id }).lean();
     const valid = await verify(auth.password, loginAuthDto.password);
-    return { valid };
+    if (!valid) throw new Error(STRINGS.INVALID_PASSWORD);
+    return { message: STRINGS.SUCCESS };
   }
 
   async register(registerAuthDto: RegisterAuthDto) {
     const alreadyExists = await this.userModel.findOne({
       email: registerAuthDto.email,
     });
-    if (alreadyExists) throw new Error('User already exists');
+    if (alreadyExists) throw new Error(STRINGS.USER_ALREADY_EXISTS);
+
     const res = await this.userModel.create(registerAuthDto);
     const hashed = await hash(registerAuthDto.password);
     await this.authModel.create({
@@ -37,7 +39,7 @@ export class AuthService {
       password: hashed,
     });
     return {
-      id: res.id,
+      message: STRINGS.USER_CREATED_SUCCESSFULLY,
     };
   }
 }
