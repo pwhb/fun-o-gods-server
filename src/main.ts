@@ -16,7 +16,7 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new GenericExceptionFilter());
-  app.useGlobalInterceptors(new DevInterceptor)
+  app.useGlobalInterceptors(new DevInterceptor());
   await app.listen(process.env.PORT);
 }
 bootstrap();

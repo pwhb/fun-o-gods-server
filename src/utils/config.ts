@@ -2,6 +2,8 @@ import STRINGS from './consts/strings.json';
 
 export { STRINGS };
 
+export const DEFAULT_LIMIT = 10;
+
 export const TYPE = {
   number: 'number',
   json: 'json',

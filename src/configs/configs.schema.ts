@@ -1,9 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { Base } from 'src/utils/base.schema';
 
 export type ConfigDocument = HydratedDocument<Config>;
 @Schema()
-export class Config {
+export class Config extends Base {
   @Prop({ unique: true })
   code: string;
 
@@ -18,12 +19,6 @@ export class Config {
 
   @Prop({ type: Array, default: [] })
   subConfigs: string;
-
-  @Prop({ type: Date, default: Date.now })
-  createdAt: Date;
-
-  @Prop({ type: Date, default: Date.now })
-  updatedAt: Date;
 }
 
 export const ConfigSchema = SchemaFactory.createForClass(Config);

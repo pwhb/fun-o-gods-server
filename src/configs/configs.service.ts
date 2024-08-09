@@ -6,49 +6,58 @@ import { Model } from 'mongoose';
 import { Config } from './configs.schema';
 import { STRINGS } from 'src/utils/config';
 import { QueryConfigDto } from './dto/query-config.dto';
+import { parseQuery, QueryType } from 'src/utils/query';
 
 @Injectable()
 export class ConfigsService {
   constructor(
     @InjectModel(Config.name) private readonly configModel: Model<Config>,
   ) {}
-  async create(createConfigDto: CreateConfigDto)
-  {
+  async create(createConfigDto: CreateConfigDto) {
     await this.configModel.create(createConfigDto);
     return {
       message: STRINGS.SUCCESS,
     };
   }
 
-  async findAll(query: QueryConfigDto)
-  {
-    console.log(query);
-    
-    const docs = await this.configModel.find();
-    const count = await this.configModel.countDocuments();
+  async findAll(query: QueryConfigDto) {
+    const { skip, limit, page, sort, filter } = parseQuery(query, [
+      {
+        key: 'name',
+        type: QueryType.Regex,
+      },
+    ]);
+    console.log({ skip, limit, page, sort, filter });
+
+    const docs = await this.configModel.find(filter, {}, { skip, limit, sort });
+    const count = await this.configModel.countDocuments(filter);
     return {
       message: STRINGS.SUCCESS,
       count,
-      data: docs
+      page,
+      size: limit,
+      data: docs,
     };
   }
 
-  async findOne(id: string)
-  {
+  async findOne(id: string) {
     return {
       message: STRINGS.SUCCESS,
-      data: await this.configModel.findById(id)
+      data: await this.configModel.findById(id),
     };
   }
 
   async update(id: string, updateConfigDto: UpdateConfigDto) {
     await this.configModel.findByIdAndUpdate(id, updateConfigDto);
     return {
-      message: STRINGS.SUCCESS
+      message: STRINGS.SUCCESS,
     };
   }
 
-  remove(id: string) {
-    return this.configModel.findByIdAndDelete(id);
+  async remove(id: string) {
+    await this.configModel.findByIdAndDelete(id);
+    return {
+      message: STRINGS.SUCCESS,
+    };
   }
 }

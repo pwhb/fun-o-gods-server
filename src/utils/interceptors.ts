@@ -5,7 +5,7 @@ import {
   CallHandler,
   Logger,
 } from '@nestjs/common';
-import { Observable, map, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import strings from './consts/strings.json';
 import { stringToCONST } from './config';

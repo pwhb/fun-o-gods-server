@@ -20,7 +20,7 @@ export function validationExceptionHandler(errors: ValidationError[]) {
   return new BadRequestException(result);
 }
 
-function MongoServerErrorHandler(exception: Error & { code?: any } ) {
+function MongoServerErrorHandler(exception: Error & { code?: any }) {
   if (exception.code === 11000) {
     return STRINGS.DUPLICATED_KEY_ERROR;
   }
@@ -29,7 +29,7 @@ function MongoServerErrorHandler(exception: Error & { code?: any } ) {
 
 @Catch()
 export class GenericExceptionFilter implements ExceptionFilter {
-  catch(exception: Error , host: ArgumentsHost) {
+  catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest<Request>();
     const response = ctx.getResponse<Response>();
@@ -49,7 +49,7 @@ export class GenericExceptionFilter implements ExceptionFilter {
     if (typeof message === 'string') {
       updateConsts(message);
     }
-    
+
     response.status(status).json({
       statusCode: status,
       message: message,

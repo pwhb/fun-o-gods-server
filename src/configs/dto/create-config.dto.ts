@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional } from 'class-validator';
 
 type Config = {
   code: string;
@@ -13,7 +13,10 @@ export class CreateConfigDto {
   @IsNotEmpty()
   name: string;
 
+  @IsOptional()
   value: string;
+
+  @IsOptional()
   type: string;
 
   @IsArray()
