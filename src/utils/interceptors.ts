@@ -11,7 +11,7 @@ import strings from './consts/strings.json';
 import { stringToCONST } from './config';
 import fs from 'fs';
 
-function updateConsts(message: string) {
+export function updateConsts(message: string) {
   if (message && !strings[stringToCONST(message)]) {
     const update = {
       ...strings,
@@ -37,8 +37,6 @@ export class DevInterceptor implements NestInterceptor {
         );
       }),
       catchError((error) => {
-        const message = error.response?.data || error.message;
-        updateConsts(message);
         Logger.log(
           `${Date.now() - now}ms`,
           context.getClass().name,
