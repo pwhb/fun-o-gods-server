@@ -22,7 +22,7 @@ export function validationExceptionHandler(errors: ValidationError[]) {
 
 function MongoServerErrorHandler(exception: Error & { code?: any }) {
   if (exception.code === 11000) {
-    return STRINGS.DUPLICATED_KEY_ERROR;
+    return STRINGS.DUPLICATE_KEY_ERROR;
   }
   return exception.message;
 }

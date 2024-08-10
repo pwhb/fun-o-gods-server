@@ -5,16 +5,16 @@ import { hash, verify } from 'argon2';
 import { InjectModel } from '@nestjs/mongoose';
 import { Auth } from './auth.schema';
 import { Model } from 'mongoose';
-import { User } from 'src/users/users.schema';
+import { User, UserDocument } from 'src/users/users.schema';
 import { STRINGS } from 'src/utils/config';
 import { TokensService } from 'src/tokens/tokens.service';
+import { ChangePasswordAuthDto } from './dto/change-passwd.dto';
 @Injectable()
 export class AuthService {
-  @Inject(TokensService)
-  private readonly tokensService: TokensService;
   constructor(
     @InjectModel(Auth.name) private readonly authModel: Model<Auth>,
     @InjectModel(User.name) private readonly userModel: Model<User>,
+    private readonly tokensService: TokensService,
   ) {}
   async login(loginAuthDto: LoginAuthDto) {
     const user = await this.userModel
@@ -28,14 +28,27 @@ export class AuthService {
       user._id,
       loginAuthDto.rememberMe,
     );
-    return { message: STRINGS.SUCCESS, data: tokens };
+    return { message: STRINGS.SUCCESS, data: user, auth: tokens };
+  }
+
+  async getUserById(userId: string) {
+    const user = await this.userModel.findById(userId).lean();
+    if (!user) throw new Error(STRINGS.USER_NOT_FOUND);
+    return user;
+  }
+
+  async me(data: unknown) {
+    return {
+      message: STRINGS.SUCCESS,
+      data: data,
+    };
   }
 
   async register(registerAuthDto: RegisterAuthDto) {
-    const alreadyExists = await this.userModel.findOne({
+    const user = await this.userModel.findOne({
       email: registerAuthDto.email,
     });
-    if (alreadyExists) throw new Error(STRINGS.USER_ALREADY_EXISTS);
+    if (user) throw new Error(STRINGS.USER_ALREADY_EXISTS);
 
     const res = await this.userModel.create(registerAuthDto);
     const hashed = await hash(registerAuthDto.password);
@@ -45,6 +58,27 @@ export class AuthService {
     });
     return {
       message: STRINGS.USER_CREATED_SUCCESSFULLY,
+    };
+  }
+
+  async changePassword(
+    changePasswordAuthDto: ChangePasswordAuthDto,
+    user: UserDocument,
+  ) {
+    if (!user) throw new Error(STRINGS.USER_NOT_FOUND);
+    const auth = await this.authModel.findOne({ userId: user._id });
+    if (!auth) throw new Error(STRINGS.USER_NOT_FOUND);
+    const valid = await verify(auth.password, changePasswordAuthDto.password);
+    if (!valid) throw new Error(STRINGS.INVALID_PASSWORD);
+    const hashed = await hash(changePasswordAuthDto.newPassword);
+    await this.authModel.findOneAndUpdate(
+      { userId: user._id },
+      {
+        password: hashed,
+      },
+    );
+    return {
+      message: STRINGS.PASSWORD_CHANGED_SUCCESSFULLY,
     };
   }
 }

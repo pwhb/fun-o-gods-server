@@ -20,7 +20,11 @@ export class TokensService {
       rememberMe ? 7 : 3,
     );
     const accessToken = await this.generateAccessToken(userId.toString());
-    return { refreshToken: refreshToken.token, accessToken };
+    return { refresh_token: refreshToken.token, access_token: accessToken };
+  }
+
+  async verifyAsync(token: string) {
+    return await this.jwtService.verifyAsync(token);
   }
 
   async generateAccessToken(payload: string) {
