@@ -7,9 +7,18 @@ import {
 } from './lib/exceptions';
 import { DevInterceptor } from './lib/interceptors';
 import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const swaggerConf = new DocumentBuilder()
+    .setTitle('FOG API')
+    .setDescription('FOG API')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, swaggerConf);
+  SwaggerModule.setup('docs', app, document);
   const configService = app.get(ConfigService);
   app.useGlobalPipes(
     new ValidationPipe({
