@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
 import { Request, Response } from 'express';
-import { MongooseError } from 'mongoose';
 import { STRINGS } from './config';
 import { updateConsts } from './interceptors';
 
