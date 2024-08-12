@@ -3,8 +3,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { STRINGS } from 'src/utils/config';
-import { parseQuery, QueryType } from 'src/utils/query';
+import { STRINGS } from 'src/lib/config';
+import { parseQuery, QueryType } from 'src/lib/query';
 import { User } from './users.schema';
 import { QueryUserDto } from './dto/query-user.dto';
 
@@ -28,6 +28,10 @@ export class UsersService {
 
     const docs = await this.userModel
       .find(filter, {}, { skip, limit, sort })
+      .populate({
+        path: 'role',
+        select: 'name',
+      })
       .lean();
     const count = await this.userModel.countDocuments(filter);
     return {
@@ -47,10 +51,16 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    await this.userModel.findByIdAndUpdate(id, updateUserDto).lean();
+    return {
+      message: STRINGS.SUCCESS,
+    };
   }
 
   async remove(id: string) {
-    return `This action removes a #${id} user`;
+    await this.userModel.findByIdAndDelete(id).lean();
+    return {
+      message: STRINGS.SUCCESS,
+    };
   }
 }

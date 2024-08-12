@@ -6,4 +6,7 @@ export class CreateUserDto {
 
   @IsOptional()
   lastName?: string;
+
+  @IsOptional()
+  roleId?: string;
 }

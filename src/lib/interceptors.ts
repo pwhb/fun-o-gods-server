@@ -18,7 +18,7 @@ export function updateConsts(message: string) {
       [stringToCONST(message)]: message,
     };
     fs.writeFileSync(
-      'src/utils/consts/strings.json',
+      'src/lib/consts/strings.json',
       JSON.stringify(update, null, 2),
     );
   }

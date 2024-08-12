@@ -15,20 +15,3 @@ export const stringToCONST = (str: string) =>
     .toUpperCase()
     .replace(/[\s]+/g, '_')
     .replace(/[^\w_]/g, '');
-
-export const CONFIG = [
-  {
-    code: 'AUTH',
-    name: 'Auth',
-    value: '',
-    type: TYPE.string,
-    subConfigs: [
-      {
-        code: 'TOKEN_EXPIRY',
-        name: 'Token Expiry',
-        value: 20,
-        type: TYPE.number,
-      },
-    ],
-  },
-];

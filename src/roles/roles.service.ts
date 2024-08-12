@@ -1,37 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { CreateConfigDto } from './dto/create-config.dto';
-import { UpdateConfigDto } from './dto/update-config.dto';
+import { CreateRoleDto } from './dto/create-role.dto';
+import { UpdateRoleDto } from './dto/update-role.dto';
+import { Role } from './roles.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Config } from './configs.schema';
+import { query } from 'express';
 import { STRINGS } from 'src/lib/config';
-import { QueryConfigDto } from './dto/query-config.dto';
 import { parseQuery, QueryType } from 'src/lib/query';
 
 @Injectable()
-export class ConfigsService {
+export class RolesService {
   constructor(
-    @InjectModel(Config.name) private readonly configModel: Model<Config>,
+    @InjectModel(Role.name) private readonly roleModel: Model<Role>,
   ) {}
-  async create(createConfigDto: CreateConfigDto) {
-    await this.configModel.create(createConfigDto);
+  async create(createRoleDto: CreateRoleDto) {
+    await this.roleModel.create(createRoleDto);
     return {
       message: STRINGS.SUCCESS,
     };
   }
 
-  async findAll(query: QueryConfigDto) {
+  async findAll() {
     const { skip, limit, page, sort, filter } = parseQuery(query, [
       {
-        key: 'name',
+        key: 'q',
         type: QueryType.Regex,
+        searchedFields: ['firstName', 'lastName'],
       },
     ]);
 
-    const docs = await this.configModel
+    const docs = await this.roleModel
       .find(filter, {}, { skip, limit, sort })
       .lean();
-    const count = await this.configModel.countDocuments(filter);
+    const count = await this.roleModel.countDocuments(filter);
     return {
       message: STRINGS.SUCCESS,
       page,
@@ -44,19 +45,19 @@ export class ConfigsService {
   async findOne(id: string) {
     return {
       message: STRINGS.SUCCESS,
-      data: await this.configModel.findById(id).lean(),
+      data: await this.roleModel.findById(id).lean(),
     };
   }
 
-  async update(id: string, updateConfigDto: UpdateConfigDto) {
-    await this.configModel.findByIdAndUpdate(id, updateConfigDto).lean();
+  async update(id: string, updateRoleDto: UpdateRoleDto) {
+    await this.roleModel.findByIdAndUpdate(id, updateRoleDto).lean();
     return {
       message: STRINGS.SUCCESS,
     };
   }
 
   async remove(id: string) {
-    await this.configModel.findByIdAndDelete(id).lean();
+    await this.roleModel.findByIdAndDelete(id).lean();
     return {
       message: STRINGS.SUCCESS,
     };

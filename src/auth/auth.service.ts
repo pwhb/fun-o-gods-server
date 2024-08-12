@@ -6,7 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Auth } from './auth.schema';
 import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/users/users.schema';
-import { STRINGS } from 'src/utils/config';
+import { STRINGS } from 'src/lib/config';
 import { TokensService } from 'src/tokens/tokens.service';
 import { ChangePasswordAuthDto } from './dto/change-passwd.dto';
 @Injectable()
@@ -32,7 +32,7 @@ export class AuthService {
   }
 
   async getUserById(userId: string) {
-    const user = await this.userModel.findById(userId).lean();
+    const user = await this.userModel.findById(userId).populate('role').lean();
     if (!user) throw new Error(STRINGS.USER_NOT_FOUND);
     return user;
   }
