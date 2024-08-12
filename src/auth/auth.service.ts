@@ -32,7 +32,7 @@ export class AuthService {
   }
 
   async getUserById(userId: string) {
-    const user = await this.userModel.findById(userId).lean();
+    const user = await this.userModel.findById(userId).populate('role').lean();
     if (!user) throw new Error(STRINGS.USER_NOT_FOUND);
     return user;
   }

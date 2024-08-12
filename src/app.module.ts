@@ -9,8 +9,10 @@ import { TokensModule } from './tokens/tokens.module';
 import { ConfigsModule } from './configs/configs.module';
 import configuration from './lib/configuration';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from './auth/auth.guard';
+import { AuthGuard, RoleGuard } from './auth/auth.guard';
 import { RolesModule } from './roles/roles.module';
+import { PermissionsModule } from './permissions/permissions.module';
+import { MenusModule } from './menus/menus.module';
 
 @Module({
   imports: [
@@ -27,8 +29,14 @@ import { RolesModule } from './roles/roles.module';
     TokensModule,
     ConfigsModule,
     RolesModule,
+    PermissionsModule,
+    MenusModule,
   ],
   controllers: [AppController],
-  providers: [AppService, { provide: APP_GUARD, useClass: AuthGuard }],
+  providers: [
+    AppService,
+    { provide: APP_GUARD, useClass: AuthGuard },
+    { provide: APP_GUARD, useClass: RoleGuard },
+  ],
 })
 export class AppModule {}

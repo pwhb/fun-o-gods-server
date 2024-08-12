@@ -28,6 +28,10 @@ export class UsersService {
 
     const docs = await this.userModel
       .find(filter, {}, { skip, limit, sort })
+      .populate({
+        path: 'role',
+        select: 'name',
+      })
       .lean();
     const count = await this.userModel.countDocuments(filter);
     return {
@@ -47,10 +51,16 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+    await this.userModel.findByIdAndUpdate(id, updateUserDto).lean();
+    return {
+      message: STRINGS.SUCCESS,
+    };
   }
 
   async remove(id: string) {
-    return `This action removes a #${id} user`;
+    await this.userModel.findByIdAndDelete(id).lean();
+    return {
+      message: STRINGS.SUCCESS,
+    };
   }
 }
