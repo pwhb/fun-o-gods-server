@@ -4,8 +4,8 @@ import { ValidationPipe } from '@nestjs/common';
 import {
   GenericExceptionFilter,
   validationExceptionHandler,
-} from './utils/exceptions';
-import { DevInterceptor } from './utils/interceptors';
+} from './lib/exceptions';
+import { DevInterceptor } from './lib/interceptors';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {

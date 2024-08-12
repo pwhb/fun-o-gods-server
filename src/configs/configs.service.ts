@@ -4,9 +4,9 @@ import { UpdateConfigDto } from './dto/update-config.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Config } from './configs.schema';
-import { STRINGS } from 'src/utils/config';
+import { STRINGS } from 'src/lib/config';
 import { QueryConfigDto } from './dto/query-config.dto';
-import { parseQuery, QueryType } from 'src/utils/query';
+import { parseQuery, QueryType } from 'src/lib/query';
 
 @Injectable()
 export class ConfigsService {

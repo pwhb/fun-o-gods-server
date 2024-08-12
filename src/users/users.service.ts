@@ -3,8 +3,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { STRINGS } from 'src/utils/config';
-import { parseQuery, QueryType } from 'src/utils/query';
+import { STRINGS } from 'src/lib/config';
+import { parseQuery, QueryType } from 'src/lib/query';
 import { User } from './users.schema';
 import { QueryUserDto } from './dto/query-user.dto';
 
