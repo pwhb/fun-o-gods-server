@@ -6,6 +6,9 @@ export type TokenDocument = HydratedDocument<Token>;
 @Schema()
 export class Token extends Base {
   @Prop()
+  deviceId: string;
+
+  @Prop()
   token: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })

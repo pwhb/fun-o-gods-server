@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {} from 'jsonwebtoken';
 import dayjs from 'dayjs';
 import { JwtService } from '@nestjs/jwt';
+import { LoginAuthDto } from 'src/auth/dto/login-auth.dto';
 
 @Injectable()
 export class TokensService {
@@ -14,10 +15,11 @@ export class TokensService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signin(userId: Types.ObjectId, rememberMe?: boolean) {
+  async signin(userId: Types.ObjectId, loginAuthDto: LoginAuthDto) {
     const refreshToken = await this.generateRefreshToken(
       userId,
-      rememberMe ? 7 : 3,
+      loginAuthDto.deviceId,
+      loginAuthDto.rememberMe ? 7 : 3,
     );
     const accessToken = await this.generateAccessToken(userId.toString());
     return { refresh_token: refreshToken.token, access_token: accessToken };
@@ -31,10 +33,11 @@ export class TokensService {
     return await this.jwtService.signAsync({ payload });
   }
 
-  async generateRefreshToken(userId: Types.ObjectId, expiry: number) {
+  async generateRefreshToken(userId: Types.ObjectId, deviceId: string, expiry: number)
+  {
     return await this.tokenModel
       .findOneAndUpdate(
-        { userId: userId },
+        { userId: userId, deviceId: deviceId },
         { token: uuidv4(), expiredAt: dayjs().add(expiry, 'day') },
         { upsert: true, returnDocument: 'after' },
       )

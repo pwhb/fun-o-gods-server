@@ -1,6 +1,9 @@
 import { IsEmail, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
 
 export class LoginAuthDto {
+  @IsNotEmpty()
+  deviceId: string;
+  
   @IsEmail()
   email: string;
 

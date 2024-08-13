@@ -19,6 +19,13 @@ export class AuthService {
   async login(loginAuthDto: LoginAuthDto) {
     const user = await this.userModel
       .findOne({ email: loginAuthDto.email })
+      .populate({
+        path:'role',
+        select: {
+          _id: 0,
+          name: 1
+        }
+      })
       .lean();
     if (!user) throw new Error(STRINGS.USER_NOT_FOUND);
     const auth = await this.authModel.findOne({ userId: user._id }).lean();
@@ -26,7 +33,7 @@ export class AuthService {
     if (!valid) throw new Error(STRINGS.INVALID_PASSWORD);
     const tokens = await this.tokensService.signin(
       user._id,
-      loginAuthDto.rememberMe,
+      loginAuthDto,
     );
     return { message: STRINGS.SUCCESS, data: user, auth: tokens };
   }
