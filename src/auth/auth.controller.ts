@@ -13,7 +13,9 @@ import { RegisterAuthDto } from './dto/register-auth.dto';
 import { ChangePasswordAuthDto } from './dto/change-passwd.dto';
 import { Public } from './auth.guard';
 import { Request } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('/api/v1/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
