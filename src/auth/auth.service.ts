@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { hash, verify } from 'argon2';
@@ -9,6 +9,7 @@ import { User, UserDocument } from 'src/users/users.schema';
 import { STRINGS } from 'src/lib/config';
 import { TokensService } from 'src/tokens/tokens.service';
 import { ChangePasswordAuthDto } from './dto/change-passwd.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -20,22 +21,27 @@ export class AuthService {
     const user = await this.userModel
       .findOne({ email: loginAuthDto.email })
       .populate({
-        path:'role',
+        path: 'role',
         select: {
           _id: 0,
-          name: 1
-        }
+          name: 1,
+        },
       })
       .lean();
     if (!user) throw new Error(STRINGS.USER_NOT_FOUND);
     const auth = await this.authModel.findOne({ userId: user._id }).lean();
     const valid = await verify(auth.password, loginAuthDto.password);
     if (!valid) throw new Error(STRINGS.INVALID_PASSWORD);
-    const tokens = await this.tokensService.signin(
-      user._id,
-      loginAuthDto,
-    );
+    const tokens = await this.tokensService.signin(user._id, loginAuthDto);
     return { message: STRINGS.SUCCESS, data: user, auth: tokens };
+  }
+
+  async refreshToken(dto: RefreshTokenDto) {
+    const auth = await this.tokensService.refreshToken(
+      dto.refresh_token,
+      dto.deviceId,
+    );
+    return { message: STRINGS.SUCCESS, auth };
   }
 
   async getUserById(userId: string) {

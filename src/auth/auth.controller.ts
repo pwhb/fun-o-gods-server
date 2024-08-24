@@ -14,6 +14,7 @@ import { ChangePasswordAuthDto } from './dto/change-passwd.dto';
 import { Public } from './auth.guard';
 import { Request } from 'express';
 import { ApiTags } from '@nestjs/swagger';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @ApiTags('Auth')
 @Controller('/api/v1/auth')
@@ -31,6 +32,13 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   login(@Body() body: LoginAuthDto) {
     return this.authService.login(body);
+  }
+
+  @Public()
+  @Post('refreshToken')
+  @HttpCode(HttpStatus.OK)
+  refreshToken(@Body() body: RefreshTokenDto) {
+    return this.authService.refreshToken(body);
   }
 
   @Public()

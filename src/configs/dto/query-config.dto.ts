@@ -1,7 +1,7 @@
-import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
+import { PartialType, PickType } from '@nestjs/mapped-types';
 import { CreateConfigDto } from './create-config.dto';
 import { IsOptional } from 'class-validator';
-import { ApiProperty, ApiQuery } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class QueryConfigDto extends PartialType(
   PickType(CreateConfigDto, ['name', 'code'] as const),

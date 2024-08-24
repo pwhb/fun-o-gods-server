@@ -1,4 +1,4 @@
-import { OmitType, PartialType, PickType } from '@nestjs/mapped-types';
+import { PartialType, PickType } from '@nestjs/mapped-types';
 
 import { IsOptional } from 'class-validator';
 import { CreatePermissionDto } from './create-permission.dto';

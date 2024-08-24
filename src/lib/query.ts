@@ -23,7 +23,7 @@ function getFilter(query: any, queryConf?: QueryKey[]) {
   const and: any[] = [];
   const filter: any = {};
 
-  for (let key of Object.keys(query).filter((v) => !exclude.includes(v))) {
+  for (const key of Object.keys(query).filter((v) => !exclude.includes(v))) {
     const config =
       queryConf && queryConf.length && queryConf.find((v) => v.key === key);
     if (config) {
@@ -68,7 +68,7 @@ function getFilter(query: any, queryConf?: QueryKey[]) {
         }
         case QueryType.Regex: {
           if (config.searchedFields && config.searchedFields.length) {
-            for (let searchedKey of config.searchedFields) {
+            for (const searchedKey of config.searchedFields) {
               or.push({
                 [searchedKey]: { $regex: query[key], $options: 'i' },
               });
@@ -101,7 +101,7 @@ function getSort(sort_by?: any) {
   const sort: any = {};
   if (sort_by) {
     const split = sort_by.split(',');
-    for (let key of split) {
+    for (const key of split) {
       const trimmed = key.trim();
       const field = trimmed.replace('-', '');
       sort[field] = trimmed[0] === '-' ? -1 : 1;
@@ -116,7 +116,7 @@ function getSelect(select?: any) {
   const projection: any = {};
   if (select) {
     const split = select.split(',');
-    for (let key of split) {
+    for (const key of split) {
       const trimmed = key.trim();
       const field = trimmed.replace('-', '');
       projection[field] = trimmed[0] === '-' ? -1 : 1;

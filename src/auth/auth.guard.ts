@@ -11,6 +11,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthService } from './auth.service';
 import { PermissionsService } from 'src/permissions/permissions.service';
 import { ObjectId } from 'mongoose';
+import { JsonWebTokenError } from 'jsonwebtoken';
 
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
@@ -36,10 +37,16 @@ export class AuthGuard implements CanActivate {
 
     try {
       const payload = await this.tokensService.verifyAsync(token);
-      const user = await this.authService.getUserById(payload.payload);
+      console.log(payload);
+
+      const user = await this.authService.getUserById(payload.userId);
       if (!user) throw new UnauthorizedException();
       request['user'] = user;
-    } catch {
+      request['deviceId'] = payload.deviceId;
+    } catch (error) {
+      if (error instanceof JsonWebTokenError) {
+        throw new Error(error.name);
+      }
       throw new UnauthorizedException();
     }
     return true;
