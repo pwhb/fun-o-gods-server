@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Token } from './tokens.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -74,6 +74,6 @@ export class TokensService {
       });
       return { refresh_token: refreshToken.token, access_token: accessToken };
     }
-    throw new Error(STRINGS.SESSION_EXPIRED_PLEASE_LOGIN_AGAIN);
+    throw new HttpException(STRINGS.SESSION_EXPIRED_PLEASE_LOGIN_AGAIN, 401);
   }
 }

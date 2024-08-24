@@ -30,8 +30,6 @@ export class PermissionsService {
       createPermissionDto.name =
         `${action} ${createPermissionDto.slug}`.toUpperCase();
     }
-    console.log('createPermissionDto', createPermissionDto);
-
     return await this.permissionModel.create(createPermissionDto);
   }
   async create(createPermissionDto: CreatePermissionDto) {
