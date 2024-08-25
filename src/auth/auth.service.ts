@@ -10,6 +10,7 @@ import { STRINGS } from 'src/lib/config';
 import { TokensService } from 'src/tokens/tokens.service';
 import { ChangePasswordAuthDto } from './dto/change-passwd.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import dayjs from 'dayjs';
 @Injectable()
 export class AuthService {
   constructor(
@@ -85,7 +86,7 @@ export class AuthService {
     if (!valid) throw new Error(STRINGS.INVALID_PASSWORD);
     const hashed = await hash(changePasswordAuthDto.newPassword);
     await this.authModel.findOneAndUpdate(
-      { userId: user._id },
+      { userId: user._id, updatedAt: dayjs() },
       {
         password: hashed,
       },
